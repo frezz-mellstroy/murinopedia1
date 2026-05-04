@@ -238,7 +238,7 @@ async function loginWithGoogle() {
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: 'https://pap3ryyy.github.io/murinopedia/login.html'
+            redirectTo: 'https://frezz-mellstroy.github.io/murinopedia1/login'
         }
     })
     if (error) showError(error.message)
