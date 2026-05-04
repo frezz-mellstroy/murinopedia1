@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транслятор — Муринопедия</title>
+    <link rel="icon" type="image/png" href="asset/logo.ico">
+    <link rel="stylesheet" href="css/wiki.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/RussianNouns.js"></script>
+<script src="js/config.js"></script>
+<script src="js/maintenance.js"></script>
+<script src="js/alert.js"></script>
+<script src="js/ban_check.js"></script>
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="logo-area">
+        <img src="asset/logo.png" alt="М.С.В." class="logo-img">
+        <a href="index.html" class="logo-text">Муринопедия</a>
+    </div>
+</header>
+
+<div class="container">
+    <main>
+        <h1>Транслятор Знанья 2.0</h1>
+
+        <div class="info-box">
+            Транслятор использует живой реестр из <a href="dictionary.html">Муринского Словаря</a>. Чем больше слов принято — тем точнее перевод.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 44px 1fr;gap:12px;align-items:start;margin-top:20px;">
+            <div class="sidebar-box">
+                <div style="font-weight:bold;color:#3366cc;margin-bottom:8px;" id="leftLangName">Русский</div>
+                <textarea id="sourceText" placeholder="Введите текст..." style="width:100%;height:260px;resize:none;border:none;outline:none;font-family:inherit;font-size:1em;background:transparent;"></textarea>
+            </div>
+            <button onclick="swapLanguages()" class="btn btn-secondary" style="margin-top:120px;border-radius:50%;width:44px;height:44px;padding:0;">⇄</button>
+            <div class="sidebar-box">
+                <div style="font-weight:bold;color:#3366cc;margin-bottom:8px;" id="rightLangName">Муринскч</div>
+                <div id="targetText" style="height:260px;overflow-y:auto;white-space:pre-wrap;font-size:1em;"></div>
+            </div>
+        </div>
+
+        <p class="text-muted" id="dictStatus" style="font-size:0.82em;margin-top:8px;">Загружати словарь...</p>
+    </main>
+</div>
+
+<footer>Муринопедия — 2026. Ч илу доной, пока естч светл.</footer>
+
+<script src="js/theme.js"></script>
+<script src="js/translator.js"></script>
+</body>
+</html>

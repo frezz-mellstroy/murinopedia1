@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="icon" type="image/png" href="asset/logo.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новол Знань — Муринопедия</title>
+    <link rel="stylesheet" href="css/wiki.css">
+    <style>
+        .editor-wrap {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
+            border: 1px solid #a2a9b1;
+            padding: 30px;
+        }
+
+        .editor-wrap h1 {
+            font-family: serif;
+            font-weight: normal;
+            font-size: 1.6em;
+            border-bottom: 1px solid #a2a9b1;
+            padding-bottom: 10px;
+            margin-bottom: 24px;
+        }
+
+        .field-group { margin-bottom: 18px; }
+
+        .field-label {
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #54595d;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .field-hint {
+            font-size: 0.78em;
+            color: #a2a9b1;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #a2a9b1;
+            font-size: 0.95em;
+            background: #f8f9fa;
+            color: #202122;
+            outline: none;
+            font-family: sans-serif;
+        }
+
+        .field-input:focus {
+            border-color: #3366cc;
+            background: #fff;
+        }
+
+        select.field-input { cursor: pointer; }
+
+        textarea.field-input {
+            min-height: 300px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .infobox-section {
+            border: 1px solid #a2a9b1;
+            padding: 15px;
+            background: #f8f9fa;
+            margin-bottom: 18px;
+        }
+
+        .infobox-section h3 {
+            margin: 0 0 12px 0;
+            font-size: 1em;
+            font-family: serif;
+            font-weight: normal;
+            border-bottom: 1px solid #eaecf0;
+            padding-bottom: 6px;
+        }
+
+        .infobox-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .infobox-row input {
+            padding: 6px 8px;
+            border: 1px solid #a2a9b1;
+            font-size: 0.85em;
+            background: #fff;
+            color: #202122;
+            outline: none;
+            width: 100%;
+        }
+
+        .infobox-row input:focus { border-color: #3366cc; }
+
+        .btn-remove {
+            background: none;
+            border: 1px solid #d33;
+            color: #d33;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 0.8em;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+
+        .btn-remove:hover { background: #fee7e6; }
+
+        .image-section {
+            border: 1px solid #a2a9b1;
+            padding: 15px;
+            background: #f8f9fa;
+            margin-bottom: 18px;
+        }
+
+        .image-section h3 {
+            margin: 0 0 12px 0;
+            font-size: 1em;
+            font-family: serif;
+            font-weight: normal;
+            border-bottom: 1px solid #eaecf0;
+            padding-bottom: 6px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .image-block h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.85em;
+            color: #54595d;
+        }
+
+        .image-tabs {
+            display: flex;
+            border-bottom: 1px solid #a2a9b1;
+            margin-bottom: 8px;
+        }
+
+        .image-tab {
+            padding: 5px 12px;
+            font-size: 0.8em;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background: none;
+            color: #54595d;
+            margin-bottom: -1px;
+        }
+
+        .image-tab.active {
+            background: #fff;
+            border-color: #a2a9b1;
+            color: #202122;
+            font-weight: bold;
+        }
+
+        .image-tab-content { display: none; }
+        .image-tab-content.active { display: block; }
+
+        .image-preview {
+            border: 1px solid #a2a9b1;
+            background: #fff;
+            margin-bottom: 8px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a2a9b1;
+            font-size: 0.82em;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 160px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .upload-zone {
+            border: 2px dashed #a2a9b1;
+            background: #f8f9fa;
+            padding: 16px;
+            text-align: center;
+            color: #54595d;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            font-size: 0.82em;
+        }
+
+        .upload-zone:hover { border-color: #3366cc; }
+
+        .upload-status {
+            font-size: 0.78em;
+            color: #54595d;
+            margin-top: 4px;
+        }
+
+        .upload-status.error { color: #d33; }
+        .upload-status.success { color: #14866d; }
+
+        .content-hint {
+            font-size: 0.8em;
+            color: #54595d;
+            margin-bottom: 6px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 4px 10px;
+            border: 1px solid #a2a9b1;
+            background: #f8f9fa;
+            font-size: 0.8em;
+            cursor: pointer;
+            border-radius: 2px;
+            color: #202122;
+        }
+
+        .toolbar-btn:hover { background: #eaecf0; }
+
+        .submit-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #eaecf0;
+        }
+
+        .status-msg { font-size: 0.85em; color: #54595d; }
+        .status-msg.error { color: #d33; }
+        .status-msg.success { color: #14866d; }
+
+        .access-denied { text-align: center; padding: 60px 20px; }
+        .access-denied h2 { font-family: serif; font-weight: normal; color: #d33; }
+        .code-block-wrap { border: 1px solid #a2a9b1; background: #fff; padding: 12px; margin-bottom: 10px; }
+        .code-block-header { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .code-block-name { padding: 5px 8px; border: 1px solid #a2a9b1; font-size: 0.85em; background: #f8f9fa; color: #202122; outline: none; width: 160px; font-family: monospace; }
+        .code-block-name:focus { border-color: #3366cc; }
+        .code-block-textarea { width: 100%; padding: 8px; border: 1px solid #a2a9b1; font-family: monospace; font-size: 0.82em; background: #1e1e2e; color: #cdd6f4; outline: none; resize: vertical; min-height: 120px; line-height: 1.5; box-sizing: border-box; }
+        .code-block-textarea:focus { border-color: #3366cc; }
+        .code-block-tag { font-family: monospace; font-size: 0.8em; background: #eaecf0; padding: 2px 6px; border-radius: 2px; color: #54595d; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-area">
+        <img src="asset/logo.png" alt="М.С.В." class="logo-img">
+        <a href="index.html" class="logo-text">Муринопедия</a>
+    </div>
+    <div class="status-bar">
+        Оперативная обстановка: <span style="color: #d33; font-weight: bold;">СТАБИЛЬНАЯ</span>
+    </div>
+</header>
+
+<div class="editor-wrap" id="editor-wrap">
+    <p style="color:#54595d;">Проверка доступа...</p>
+</div>
+
+<footer>
+    Муринопедия — 2026 год. <br>
+    Ч илу доной, пока естч светл. Мурино стояти, Фог дрожати.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/maintenance.js"></script>
+<script src="js/alert.js"></script>
+<script src="js/ban_check.js"></script>
+<script src="js/theme.js"></script>
+<script>
+let currentUser = null
+let currentRole = null
+let isFounder = false
+let infoboxFields = []
+let codeBlocks = []
+let coverUrl = ''
+let contentImageUrl = ''
+
+async function init() {
+    const { data: { session } } = await supabaseClient.auth.getSession()
+    if (!session) { showDenied('Нрт идентификации — войди вч систему'); return }
+
+    const { data: user } = await supabaseClient
+        .from('users').select('username, role').eq('id', session.user.id).single()
+
+    if (!user) { showDenied('Людич нрт найденол вч реестре'); return }
+
+    currentUser = user.username
+    currentRole = user.role
+    renderEditor()
+}
+
+function showDenied(msg) {
+    document.getElementById('editor-wrap').innerHTML = `
+        <div class="access-denied">
+            <h2>Доступ закрытч</h2>
+            <p>${msg}</p>
+            <a href="login.html" class="btn btn-primary">Войти вч систему</a>
+        </div>
+    `
+}
+
+function renderEditor() {
+    const isMsv = ['м.с.в.проверкость', 'м.с.в.содрунник', 'м.с.в.основательность'].includes(currentRole)
+    isFounder = currentRole === 'м.с.в.основательность'
+
+    document.getElementById('editor-wrap').innerHTML = `
+        <h1>Новол Знань</h1>
+
+        <div class="editor-grid">
+            <div class="field-group">
+                <label class="field-label">Название статьи</label>
+                <input type="text" class="field-input" id="f-title" placeholder="Мурино, Фог, М.С.В...">
+            </div>
+            <div class="field-group">
+                <label class="field-label">Категория</label>
+                <select class="field-input" id="f-tag" onchange="onTagChange(this)">
+                    <option value="Локация">Локация</option>
+                    <option value="Сущность">Сущность</option>
+                    <option value="История">История</option>
+                    <option value="Язык">Язык</option>
+                    <option value="М.С.В.">М.С.В.</option>
+                    <option value="Сезонность">Сезонность</option>
+                    <option value="Другол">Другол</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Краткое описание (для карточки)</label>
+            <input type="text" class="field-input" id="f-desc" placeholder="Одно предложение о чём статья...">
+        </div>
+
+        <div id="season-subsection-wrap" style="display:none;" class="field-group">
+            <label class="field-label">Подраздел сезонности</label>
+            <select class="field-input" id="f-season-sub" onchange="onSeasonSubChange(this)">
+                <option value="">— выбери подраздел —</option>
+                <option value="Молочное">Молочное</option>
+                <option value="Мурино">Мурино</option>
+                <option value="Банька">Банька</option>
+                <option value="Красноярость">Красноярость</option>
+                <option value="Село">Село</option>
+                <option value="Город">Город</option>
+                <option value="__custom__">Своё...</option>
+            </select>
+            <div id="season-custom-wrap" style="display:none;margin-top:8px;">
+                <input type="text" class="field-input" id="season-custom" placeholder="Название своего подраздела...">
+            </div>
+        </div>
+
+        <div class="infobox-section">
+            <h3>Инфобокс</h3>
+            <div id="infobox-fields"></div>
+            <button class="btn btn-secondary" onclick="addInfoboxField()" style="margin-top:8px;">+ Добавить поле</button>
+        </div>
+
+        ${isFounder ? `
+        <div class="infobox-section" id="code-section">
+            <h3>Кодблоки <span style="font-size:0.8em;color:#a2a9b1;">(только основательность)</span></h3>
+            <div style="font-size:0.82em;color:#54595d;margin-bottom:10px;">Вставляй в текст через &lt;code1&gt;, &lt;code2&gt; и т.д. Макс. 4 блока.</div>
+            <div id="code-blocks-list"></div>
+            <button class="btn btn-secondary" onclick="addCodeBlock()" style="margin-top:8px;" id="add-code-btn">+ Добавить блок</button>
+        </div>
+        ` : ''}
+
+        <div class="image-section">
+            <h3>Картинки</h3>
+            <div class="image-grid">
+
+                <div class="image-block">
+                    <h4>Обложка (инфобокс) — макс. 300×200px</h4>
+                    <div class="image-preview" id="cover-preview">Нрт обложки</div>
+                    <div class="image-tab-content active" id="cover-content-upload">
+                        <div class="upload-zone" onclick="document.getElementById('cover-file').click()">
+                            Выбери PNG / JPG / WebP
+                            <input type="file" id="cover-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="uploadImage(this,'cover')">
+                        </div>
+                        <div class="upload-status" id="cover-upload-status"></div>
+                    </div>
+                </div>
+
+                <div class="image-block">
+                    <h4>Картинка для &lt;image&gt; в тексте — макс. 800×500px</h4>
+                    <div class="image-preview" id="content-preview">Нрт картинки</div>
+                    <div class="image-tab-content active" id="content-content-upload">
+                        <div class="upload-zone" onclick="document.getElementById('content-file').click()">
+                            Выбери PNG / JPG / WebP
+                            <input type="file" id="content-file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="uploadImage(this,'content')">
+                        </div>
+                        <div class="upload-status" id="content-upload-status"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Текст статьи</label>
+            <div class="toolbar">
+                <button class="toolbar-btn" onclick="insertText('## ', '')">Заголовок</button>
+                <button class="toolbar-btn" onclick="insertText('### ', '')">Подзаголовок</button>
+                <button class="toolbar-btn" onclick="insertText('**', '**')">Жирный</button>
+                <button class="toolbar-btn" onclick="insertText('*', '*')">Курсив</button>
+                <button class="toolbar-btn" onclick="insertText('<image>', '')">Картинка</button>
+                <button class="toolbar-btn" onclick="insertText('> ', '')">Цитата</button>
+            </div>
+            <div class="content-hint">Используй &lt;image&gt; дляч вставки картинки вч тексте. ## — заголовок, ### — подзаголовок, **текст** — жирный.</div>
+            <textarea class="field-input" id="f-content" placeholder="Пиши Знань здесч..."></textarea>
+        </div>
+
+        ${isMsv ? `
+        <div class="field-group">
+            <label class="field-label">Статус публикации</label>
+            <select class="field-input" id="f-status">
+                <option value="pending">На проверке</option>
+                <option value="published">Опубликовано</option>
+            </select>
+        </div>
+        ` : ''}
+
+        <div class="submit-bar">
+            <button class="btn btn-primary" onclick="submitArticle()">Отправити нач проверку</button>
+            <a href="articles.html" class="btn btn-secondary">Отменити</a>
+            <span class="status-msg" id="submit-status"></span>
+        </div>
+    `
+
+    renderInfoboxFields()
+}
+
+function onTagChange(select) {
+    const wrap = document.getElementById('season-subsection-wrap')
+    if (wrap) wrap.style.display = select.value === 'Сезонность' ? 'block' : 'none'
+}
+
+function onSeasonSubChange(select) {
+    const wrap = document.getElementById('season-custom-wrap')
+    if (wrap) wrap.style.display = select.value === '__custom__' ? 'block' : 'none'
+}
+
+function getSeasonValue() {
+    const tag = document.getElementById('f-tag')?.value
+    if (tag !== 'Сезонность') return null
+    const sub = document.getElementById('f-season-sub')?.value
+    if (!sub) return null
+    if (sub === '__custom__') {
+        return document.getElementById('season-custom')?.value?.trim() || null
+    }
+    return sub
+}
+
+function updatePreview(type, url) {
+    const preview = document.getElementById(type + '-preview')
+    if (url) {
+        preview.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='Нрт — нрт загружалость'">`
+    } else {
+        preview.textContent = type === 'cover' ? 'Нрт обложки' : 'Нрт картинки'
+    }
+}
+
+async function uploadImage(input, type) {
+    const file = input.files[0]
+    if (!file) return
+
+    const status = document.getElementById(type + '-upload-status')
+    status.className = 'upload-status'
+    status.textContent = 'Загружати...'
+
+    const ext = file.name.split('.').pop()
+    const folder = type === 'cover' ? 'covers' : 'content'
+    const fileName = `${folder}/${Date.now()}.${ext}`
+
+    const { error } = await supabaseClient.storage
+        .from('images').upload(fileName, file, { upsert: false })
+
+    if (error) {
+        status.className = 'upload-status error'
+        status.textContent = 'Смертч-шум: ' + error.message
+        return
+    }
+
+    const { data: urlData } = supabaseClient.storage.from('images').getPublicUrl(fileName)
+    const url = urlData.publicUrl
+
+    if (type === 'cover') coverUrl = url
+    else contentImageUrl = url
+
+    status.className = 'upload-status success'
+    status.textContent = 'Загруженол: ' + file.name
+    updatePreview(type, url)
+}
+
+function addInfoboxField() {
+    infoboxFields.push({ label: '', value: '' })
+    renderInfoboxFields()
+}
+
+function removeInfoboxField(i) {
+    infoboxFields.splice(i, 1)
+    renderInfoboxFields()
+}
+
+function renderInfoboxFields() {
+    const container = document.getElementById('infobox-fields')
+    if (!container) return
+    container.innerHTML = infoboxFields.map((f, i) => `
+        <div class="infobox-row">
+            <input type="text" placeholder="Поле (напр. Статус)" value="${f.label}" oninput="infoboxFields[${i}].label = this.value">
+            <input type="text" placeholder="Значение" value="${f.value}" oninput="infoboxFields[${i}].value = this.value">
+            <button class="btn-remove" onclick="removeInfoboxField(${i})">Удалить</button>
+        </div>
+    `).join('')
+}
+
+function insertText(before, after) {
+    const ta = document.getElementById('f-content')
+    const start = ta.selectionStart
+    const end = ta.selectionEnd
+    const selected = ta.value.substring(start, end)
+    ta.value = ta.value.substring(0, start) + before + selected + after + ta.value.substring(end)
+    ta.focus()
+    ta.selectionStart = start + before.length
+    ta.selectionEnd = start + before.length + selected.length
+}
+
+async function submitArticle() {
+    const title = document.getElementById('f-title').value.trim()
+    const tag = document.getElementById('f-tag').value
+    const desc = document.getElementById('f-desc').value.trim()
+    const content = document.getElementById('f-content').value.trim()
+    const statusEl = document.getElementById('f-status')
+    const status = statusEl ? statusEl.value : 'pending'
+    const season = getSeasonValue()
+    const msg = document.getElementById('submit-status')
+
+    if (!title) { msg.className = 'status-msg error'; msg.textContent = 'Нрт названия — Фог вч форме'; return }
+    if (!content) { msg.className = 'status-msg error'; msg.textContent = 'Нрт текста — пустол Знань'; return }
+
+    msg.className = 'status-msg'
+    msg.textContent = 'Отправляти...'
+
+    const { data, error } = await supabaseClient.from('articles').insert({
+        title,
+        tag,
+        description: desc,
+        content,
+        author: currentUser,
+        status,
+        cover_url: coverUrl || null,
+        image_url: contentImageUrl || null,
+        infobox: infoboxFields.filter(f => f.label || f.value),
+        code_blocks: codeBlocks.filter(b => b.name && b.content),
+        season: season || null
+    }).select().single()
+
+    if (error) {
+        msg.className = 'status-msg error'
+        msg.textContent = 'Смертч-шум: ' + error.message
+        return
+    }
+
+    msg.className = 'status-msg success'
+    msg.textContent = 'Знань отправленол!'
+
+    if (status === 'pending') {
+        const { data: msvUsers } = await supabaseClient
+            .from('users')
+            .select('id')
+            .in('role', ['м.с.в.проверкость', 'м.с.в.содрунник', 'м.с.в.основательность'])
+        if (msvUsers && msvUsers.length > 0) {
+            await supabaseClient.from('notifications').insert(
+                msvUsers.map(u => ({
+                    user_id: u.id,
+                    type: 'review',
+                    message: `Новол Знань на проверке: «${title}» от ${currentUser}`,
+                    link: `article.html?id=${data.id}`
+                }))
+            )
+        }
+    }
+
+    setTimeout(() => { window.location.href = 'article.html?id=' + data.id }, 1000)
+}
+
+function addCodeBlock() {
+    if (codeBlocks.length >= 4) return
+    const idx = codeBlocks.length + 1
+    codeBlocks.push({ name: 'code' + idx, content: '' })
+    renderCodeBlocks()
+    if (codeBlocks.length >= 4) {
+        document.getElementById('add-code-btn').style.display = 'none'
+    }
+}
+
+function removeCodeBlock(i) {
+    codeBlocks.splice(i, 1)
+    renderCodeBlocks()
+    const btn = document.getElementById('add-code-btn')
+    if (btn) btn.style.display = 'inline-block'
+}
+
+function renderCodeBlocks() {
+    const container = document.getElementById('code-blocks-list')
+    if (!container) return
+    container.innerHTML = codeBlocks.map((b, i) => `
+        <div class="code-block-wrap">
+            <div class="code-block-header">
+                <span style="font-size:0.82em;color:#54595d;">Имя:</span>
+                <input type="text" class="code-block-name" value="${b.name}"
+                    placeholder="code1"
+                    oninput="codeBlocks[${i}].name = this.value.replace(/[^a-zA-Z0-9]/g,''); renderCodeBlockTag(${i})">
+                <span class="code-block-tag" id="cb-tag-${i}">&lt;${b.name}&gt;</span>
+                <button class="btn-remove" onclick="removeCodeBlock(${i})">Удалить</button>
+            </div>
+            <textarea class="code-block-textarea"
+                placeholder="Вставь HTML код сюда..."
+                oninput="codeBlocks[${i}].content = this.value">${b.content}</textarea>
+        </div>
+    `).join('')
+}
+
+function renderCodeBlockTag(i) {
+    const tag = document.getElementById('cb-tag-' + i)
+    if (tag) tag.textContent = '<' + (codeBlocks[i].name || 'code' + (i+1)) + '>'
+}
+
+init()
+</script>
+
+</body>
+</html>
